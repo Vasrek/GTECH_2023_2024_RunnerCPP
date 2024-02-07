@@ -98,6 +98,11 @@ void ARunCharacter::Death()
 	}
 }
 
+void ARunCharacter::AddCoin()
+{
+	RunGameMode->AddCoin();
+}
+
 void ARunCharacter::OnDeath()
 {
 	bIsDead = false;

@@ -57,4 +57,11 @@ AFloorTile* AGameModeRunner::AddFloorTile(const bool bSpawnItems)
 
 }
 
+void AGameModeRunner::AddCoin()
+{
+	TotalCoins += 1;
+
+	UE_LOG(LogTemp, Warning, TEXT("TOTAL COINS: %d"), TotalCoins);
+}
+
 

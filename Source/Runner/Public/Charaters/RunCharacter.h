@@ -40,6 +40,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Death();
 
+	UFUNCTION()
+	void AddCoin();
+
 protected:
 	virtual void BeginPlay() override;
 

@@ -28,11 +28,17 @@ public:
 	UPROPERTY(VisibleInstanceOnly, Category = "Runtime")
 	TArray<float> LaneSwitchValues;
 
+	UPROPERTY(VisibleAnywhere)
+	int32 TotalCoins = 0;
+
 	UFUNCTION(BlueprintCallable)
 	void CreateInitialFloorTiles();
 
 	UFUNCTION(BlueprintCallable)
 	AFloorTile* AddFloorTile(const bool bSpawnItems);
+
+	UFUNCTION(BlueprintCallable)
+	void AddCoin();
 	
 protected:
 	virtual void BeginPlay() override;

@@ -7,6 +7,7 @@
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
 #include "../../../Public/Obstacles/Obstacles.h"
+#include "../../../Public/Coins/CoinsItems.h"
 
 // Sets default values
 AFloorTile::AFloorTile()
@@ -52,7 +53,7 @@ void AFloorTile::BeginPlay()
 
 void AFloorTile::SpawnItems()
 {
-	if (IsValid(SmallObstacleClass) && IsValid(BigObstacleClass))
+	if (IsValid(SmallObstacleClass) && IsValid(BigObstacleClass) && IsValid(CoinClass))
 	{
 		SpawnLaneItem(CenterLane);
 		SpawnLaneItem(LeftLane);
@@ -68,13 +69,17 @@ void AFloorTile::SpawnLaneItem(UArrowComponent* Lane)
 
 	const FTransform& SpawnLocation = Lane->GetComponentTransform();
 
-	if (UKismetMathLibrary::InRange_FloatFloat(RandVal, 0.5f, 0.75f, true, true))
+	if (UKismetMathLibrary::InRange_FloatFloat(RandVal, SpawnPercent1, SpawnPercent2, true, true))
 	{
 		AObstacles* Obstacle = GetWorld()->SpawnActor<AObstacles>(SmallObstacleClass, SpawnLocation, SpawnParameters);
 	}
-	else if (UKismetMathLibrary::InRange_FloatFloat(RandVal, 0.75f, 1.f, true, true))
+	else if (UKismetMathLibrary::InRange_FloatFloat(RandVal, SpawnPercent2, SpawnPercent3, true, true))
 	{
 		AObstacles* Obstacle = GetWorld()->SpawnActor<AObstacles>(BigObstacleClass, SpawnLocation, SpawnParameters);
+	}
+	else if (UKismetMathLibrary::InRange_FloatFloat(RandVal, SpawnPercent3, 1.f, true, true))
+	{
+		ACoinsItems* Coin = GetWorld()->SpawnActor<ACoinsItems>(CoinClass, SpawnLocation, SpawnParameters);
 	}
 
 
