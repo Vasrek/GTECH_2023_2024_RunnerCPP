@@ -1,13 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Actors/Floors/FloorTile.h"
 #include "GameFramework/Actor.h"
 #include "../../../../../Source/Runner/Public/Charaters/RunCharacter.h"
 #include "../../../../../Source/Runner/Public/GameMode/GameModeRunner.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
+#include "../../../Public/Obstacles/Obstacles.h"
 
 // Sets default values
 AFloorTile::AFloorTile()
@@ -51,9 +50,33 @@ void AFloorTile::BeginPlay()
 	
 }
 
-void AFloorTile::Tick(float DeltaTime)
+void AFloorTile::SpawnItems()
 {
-	Super::Tick(DeltaTime);
+	if (IsValid(SmallObstacleClass) && IsValid(BigObstacleClass))
+	{
+		SpawnLaneItem(CenterLane);
+		SpawnLaneItem(LeftLane);
+		SpawnLaneItem(RightLane);
+	}
+}
+
+void AFloorTile::SpawnLaneItem(UArrowComponent* Lane)
+{
+	const float RandVal = FMath::FRandRange(0.f, 1.f);
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	const FTransform& SpawnLocation = Lane->GetComponentTransform();
+
+	if (UKismetMathLibrary::InRange_FloatFloat(RandVal, 0.5f, 0.75f, true, true))
+	{
+		AObstacles* Obstacle = GetWorld()->SpawnActor<AObstacles>(SmallObstacleClass, SpawnLocation, SpawnParameters);
+	}
+	else if (UKismetMathLibrary::InRange_FloatFloat(RandVal, 0.75f, 1.f, true, true))
+	{
+		AObstacles* Obstacle = GetWorld()->SpawnActor<AObstacles>(BigObstacleClass, SpawnLocation, SpawnParameters);
+	}
+
 
 }
 
@@ -62,7 +85,7 @@ void AFloorTile::OnTriggerBoxOverlap(UPrimitiveComponent* OverlappedComponent, A
 	ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
 	if (RunCharacter)
 	{
-		RunGameMode->AddFloorTile();
+		RunGameMode->AddFloorTile(true);
 
 		GetWorldTimerManager().SetTimer(DestroyHandle, this, &AFloorTile::DestroyFloorTile, 2.f, false);
 	}

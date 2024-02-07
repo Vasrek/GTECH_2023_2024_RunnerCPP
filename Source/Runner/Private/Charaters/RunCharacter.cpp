@@ -10,6 +10,7 @@
 #include "Components/InputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 ARunCharacter::ARunCharacter()
@@ -66,6 +67,49 @@ void ARunCharacter::MyMoveDown()
 	UE_LOG(LogTemp, Warning, TEXT("MOVE DOWN WAS PRESSED"));
 }
 
+
+void ARunCharacter::Death()
+{
+	if (!bIsDead)
+	{
+		const FVector Location = GetActorLocation();
+
+		UWorld* World = GetWorld();
+
+		if (World)
+		{
+			bIsDead = true;
+			DisableInput(nullptr);
+
+
+			if (DeathParticleSystem)
+			{
+				UGameplayStatics::SpawnEmitterAtLocation(World, DeathParticleSystem, Location);
+			}
+			if (DeathSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(World, DeathSound, Location);
+			}
+
+			GetMesh()->SetVisibility(false);
+
+			World->GetTimerManager().SetTimer(RestartTimerHandle, this, &ARunCharacter::OnDeath, 1.f);
+		}
+	}
+}
+
+void ARunCharacter::OnDeath()
+{
+	bIsDead = false;
+
+	if (RestartTimerHandle.IsValid())
+	{
+		GetWorldTimerManager().ClearTimer(RestartTimerHandle);
+	}
+
+	UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), TEXT("RestartLevel"));
+}
+
 void ARunCharacter::ChangeLaneUpdate(const float Value)
 {
 	FVector Location = GetCapsuleComponent()->GetComponentLocation();
@@ -78,19 +122,6 @@ void ARunCharacter::ChangeLaneFinished()
 	CurrentLane = NextLane;
 }
 
-// Called every frame
-void ARunCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	FRotator ControlRot = GetControlRotation();
-	ControlRot.Roll = 0.f;
-	ControlRot.Pitch = 0.f;
-
-	AddMovementInput(ControlRot.Vector());
-}
-
-// Called to bind functionality to input
 void ARunCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -104,4 +135,14 @@ void ARunCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	}
 }
 
+void ARunCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	FRotator ControlRot = GetControlRotation();
+	ControlRot.Roll = 0.f;
+	ControlRot.Pitch = 0.f;
+
+	AddMovementInput(ControlRot.Vector());
+}
 

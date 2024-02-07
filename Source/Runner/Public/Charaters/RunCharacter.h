@@ -16,6 +16,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Assets)
+	class UParticleSystem* DeathParticleSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Assets)
+	class USoundBase* DeathSound;
+
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
 	int32 CurrentLane = 1;
 
@@ -30,6 +36,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Lane")
 	void ChangeLaneFinished();
+
+	UFUNCTION(BlueprintCallable)
+	void Death();
 
 protected:
 	virtual void BeginPlay() override;
@@ -49,6 +58,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	class UInputAction* MyJump;
 
+	UPROPERTY()
+	FTimerHandle RestartTimerHandle;
+
+	UPROPERTY()
+	bool bIsDead = false;
+
 	UFUNCTION()
 	void MyMoveRight();
 
@@ -57,6 +72,10 @@ protected:
 
 	UFUNCTION()
 	void MyMoveDown();
+
+	UFUNCTION()
+	void OnDeath();
+
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))

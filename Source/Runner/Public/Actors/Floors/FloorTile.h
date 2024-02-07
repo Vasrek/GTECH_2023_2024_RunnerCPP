@@ -12,6 +12,7 @@
 class UStaticMeshComponent;
 class USceneComponent;
 class UBoxComponent;
+class AObstacles;
 
 UCLASS()
 class RUNNER_API AFloorTile : public AActor
@@ -20,7 +21,12 @@ class RUNNER_API AFloorTile : public AActor
 	
 public:	
 	AFloorTile();
-	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Config)
+	TSubclassOf<AObstacles> SmallObstacleClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Config)
+	TSubclassOf<AObstacles> BigObstacleClass;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USceneComponent* SceneComponent;
@@ -48,6 +54,9 @@ public:
 		return AttachPoint->GetComponentTransform();
 	}
 
+	UFUNCTION(BlueprintCallable)
+	void SpawnItems();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -62,4 +71,7 @@ protected:
 
 	UFUNCTION()
 	void DestroyFloorTile();
+
+	UFUNCTION()
+	void SpawnLaneItem(UArrowComponent* Lane);
 };

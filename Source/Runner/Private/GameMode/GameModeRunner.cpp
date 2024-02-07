@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "GameMode/GameModeRunner.h"
 #include "../../../../Source/Runner/Public/Actors/Floors/FloorTile.h"
 
@@ -11,7 +8,7 @@ void AGameModeRunner::BeginPlay()
 
 void AGameModeRunner::CreateInitialFloorTiles()
 {
-	AFloorTile* Tile = AddFloorTile();
+	AFloorTile* Tile = AddFloorTile(false);
 
 	if (Tile)
 	{
@@ -20,18 +17,22 @@ void AGameModeRunner::CreateInitialFloorTiles()
 		LaneSwitchValues.Add(Tile->RightLane->GetComponentLocation().Y);
 	}
 
-	for (float Val : LaneSwitchValues)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("LANE VALUE: %f"), Val);
-	}
+	//for (float Val : LaneSwitchValues)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("LANE VALUE: %f"), Val);
+	//}
+
+	AddFloorTile(false);
+	AddFloorTile(false);
+
 
 	for (int i = 0; i < NumItinitalFloorTiles; i++)
 	{
-		AddFloorTile();
+		AddFloorTile(true);
 	}
 }
 
-AFloorTile* AGameModeRunner::AddFloorTile()
+AFloorTile* AGameModeRunner::AddFloorTile(const bool bSpawnItems)
 {
 	UWorld* World = GetWorld();
 
@@ -41,6 +42,11 @@ AFloorTile* AGameModeRunner::AddFloorTile()
 
 		if (Tile)
 		{
+			if (bSpawnItems)
+			{
+				Tile->SpawnItems();
+			}
+
 			NextSpawnPoint = Tile->GetAttachTransform();
 		}
 

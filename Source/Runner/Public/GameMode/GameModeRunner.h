@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -34,7 +32,7 @@ public:
 	void CreateInitialFloorTiles();
 
 	UFUNCTION(BlueprintCallable)
-	AFloorTile* AddFloorTile();
+	AFloorTile* AddFloorTile(const bool bSpawnItems);
 	
 protected:
 	virtual void BeginPlay() override;
