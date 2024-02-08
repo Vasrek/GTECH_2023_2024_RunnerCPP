@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Charaters/RunCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "../../Public/GameMode/GameModeRunner.h"
